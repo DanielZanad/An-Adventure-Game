@@ -1,4 +1,8 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::RefCell,
+    rc::Rc,
+    sync::{Arc, Mutex},
+};
 
 use crate::helpers::helper::ActionLink;
 
@@ -11,38 +15,58 @@ pub struct Location {
 }
 
 impl Location {
-    fn new(name: &str) -> Self {
+    pub fn new(name: &str) -> Self {
         Self {
             name: name.to_string(),
             actions: None,
         }
     }
 
-    fn add_action(&mut self, action: Rc<RefCell<Actions>>) {
+    pub fn add_action(&mut self, action: Arc<Mutex<Actions>>) {
         match &self.actions {
             Some(first) => {
                 let mut current = first.clone();
                 while let Some(next) = {
-                    let current_borrow = current.borrow();
-                    current_borrow.next.as_ref().map(|next| next.clone())
+                    let current_guard = current.lock().unwrap();
+                    current_guard.next.as_ref().map(|next| next.clone())
                 } {
                     current = next;
                 }
-                current.borrow_mut().next = Some(action.clone());
-                action.borrow_mut().prev = Some(current);
+                current.lock().unwrap().next = Some(action.clone());
+                action.lock().unwrap().prev = Some(current);
             }
             None => self.actions = Some(action),
         }
     }
 
-    fn perform_action(&self, input: &str) -> String {
+    pub fn perform_action(&self, input: &str) -> String {
         let mut current = self.actions.clone();
         while let Some(action) = current {
-            if action.borrow().action_triggers.contains(&input.to_string()) {
-                return action.borrow_mut().complete();
+            let mut action_guard = action.lock().unwrap();
+            if action_guard.action_triggers.contains(&input) {
+                return action_guard.complete();
             }
-            current = action.borrow().next.clone()
+            current = action_guard.next.clone()
         }
         return format!("Ação {} não encontrada nesta localização.", input);
+    }
+
+    pub fn show_actions(&self) {
+        match &self.actions {
+            Some(first) => {
+                let mut current = first.clone();
+                while let Some(next) = {
+                    let current_guard = current.lock().unwrap();
+                    println!("Nome da ação: {}", current_guard.name);
+                    println!("Descrição da ação: {}", current_guard.description);
+                    println!("Nome da ação: {:?}", current_guard.action_triggers);
+                    println!("Ação está completa?: {}", current_guard.completed);
+                    current_guard.next.as_ref().map(|next| next.clone())
+                } {
+                    current = next;
+                }
+            }
+            None => {}
+        }
     }
 }

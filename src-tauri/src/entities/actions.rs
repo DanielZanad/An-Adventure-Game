@@ -1,27 +1,31 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::RefCell,
+    rc::Rc,
+    sync::{Arc, Mutex},
+};
 
 use crate::helpers::helper::ActionLink;
 #[derive(Debug)]
 pub struct Actions {
-    name: String,
-    pub action_triggers: Vec<String>,
-    description: String,
-    success_message: String,
-    fail_message: Option<String>,
-    completed: bool,
+    pub name: String,
+    pub action_triggers: Vec<&'static str>,
+    pub description: String,
+    pub success_message: String,
+    pub fail_message: Option<String>,
+    pub completed: bool,
     pub prev: ActionLink,
     pub next: ActionLink,
 }
 
 impl Actions {
-    fn new(
+    pub fn new(
         name: &str,
-        action_triggers: Vec<String>,
+        action_triggers: Vec<&'static str>,
         description: &str,
         success_message: &str,
         fail_message: Option<String>,
-    ) -> Rc<RefCell<Self>> {
-        Rc::new(RefCell::new(Self {
+    ) -> Arc<Mutex<Self>> {
+        Arc::new(Mutex::new(Self {
             name: name.to_string(),
             action_triggers,
             description: description.to_string(),
@@ -35,16 +39,14 @@ impl Actions {
 
     pub fn complete(&mut self) -> String {
         if let Some(prev) = &self.prev {
-            if !prev.borrow().completed {
-                return format!(
-                    "Você precisa completar {:?} antes de {}",
-                    prev.borrow(),
+            if let Ok(prev) = prev.lock() {
+                if !prev.completed {
                     if let Some(fail_message) = &self.fail_message {
                         return fail_message.clone();
                     } else {
-                        String::new()
+                        return String::new();
                     }
-                );
+                }
             }
         }
         self.completed = true;

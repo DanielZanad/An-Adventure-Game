@@ -1,6 +1,4 @@
 use crate::entities::actions::Actions;
-use std::{cell::RefCell, rc::Rc};
+use std::sync::{Arc, Mutex};
 
-pub type ActionLink = Option<Rc<RefCell<Actions>>>;
-
-fn main() {}
+pub type ActionLink = Option<Arc<Mutex<Actions>>>;
