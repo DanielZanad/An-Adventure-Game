@@ -1,14 +1,10 @@
-use std::{
-    cell::RefCell,
-    rc::Rc,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use crate::helpers::helper::ActionLink;
 #[derive(Debug)]
 pub struct Actions {
     pub name: String,
-    pub action_triggers: Vec<&'static str>,
+    pub action_triggers: Vec<String>,
     pub description: String,
     pub success_message: String,
     pub fail_message: Option<String>,
@@ -20,7 +16,7 @@ pub struct Actions {
 impl Actions {
     pub fn new(
         name: &str,
-        action_triggers: Vec<&'static str>,
+        action_triggers: Vec<String>,
         description: &str,
         success_message: &str,
         fail_message: Option<String>,

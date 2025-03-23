@@ -1,49 +1,41 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+import { FormEvent, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [input, setInput] = useState("");
 
-  async function greet() {
+  async function read_input(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { input: name }));
+    console.log(await invoke("read_input", { input }));
   }
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <main className="text-gray-500 bg-black">
+      <div className="flex flex-col justify-between h-dvh w-full border items-center ">
+        <div className="border border-amber-400 w-10/12 h-5/12 mt-12"></div>
+        <div className="border border-amber-400 w-10/12 h-5/12 mb-6 flex flex-col">
+          <div className="w-full h-8/12 border border-amber-300"></div>
+          <form
+            className="flex flex-row items-center m-auto justify-between gap-40"
+            onSubmit={read_input}
+          >
+            <input
+              type="text"
+              className="border w-96"
+              onChange={(e) => setInput(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="border border-amber-400 cursor-pointer p-4"
+            >
+              Enviar
+            </button>
+          </form>
+        </div>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
     </main>
   );
 }

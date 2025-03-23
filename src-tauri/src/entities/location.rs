@@ -1,23 +1,23 @@
-use std::{
-    cell::RefCell,
-    rc::Rc,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use crate::helpers::helper::ActionLink;
 
-use super::actions::Actions;
+use super::{action::Actions, character::Character};
 
 #[derive(Debug)]
 pub struct Location {
     name: String,
     actions: ActionLink,
+    look_around_message: Vec<String>,
+    characters: Vec<Character>,
 }
 
 impl Location {
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: &str, look_around_message: Vec<String>, characters: Vec<Character>) -> Self {
         Self {
             name: name.to_string(),
+            characters,
+            look_around_message,
             actions: None,
         }
     }
@@ -39,11 +39,14 @@ impl Location {
         }
     }
 
-    pub fn perform_action(&self, input: &str) -> String {
+    pub fn perform_action(&mut self, input: &str) -> String {
         let mut current = self.actions.clone();
         while let Some(action) = current {
             let mut action_guard = action.lock().unwrap();
-            if action_guard.action_triggers.contains(&input) {
+            if action_guard.action_triggers.contains(&input.to_string()) {
+                for character in &mut self.characters {
+                    character.change_initial(&action_guard.name);
+                }
                 return action_guard.complete();
             }
             current = action_guard.next.clone()
