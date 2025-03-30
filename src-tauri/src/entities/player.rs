@@ -1,6 +1,7 @@
 pub struct Player {
     name: String,
     items: Vec<String>,
+    pub previous_locations: Vec<String>,
 }
 
 impl Player {
@@ -8,6 +9,7 @@ impl Player {
         Player {
             name: name.to_string(),
             items,
+            previous_locations: vec![],
         }
     }
 }

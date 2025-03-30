@@ -8,6 +8,11 @@ function App() {
   async function read_input(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    setInput((input) => input.trim().toLowerCase());
+
+    if (input === "olharemvolta") {
+      console.log(await invoke("look_around"));
+    }
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     console.log(await invoke("read_input", { input }));
   }

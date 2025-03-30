@@ -6,19 +6,26 @@ use super::{action::Actions, character::Character};
 
 #[derive(Debug)]
 pub struct Location {
-    name: String,
+    pub name: String,
     actions: ActionLink,
-    look_around_message: Vec<String>,
+    look_around_messages: Vec<String>,
     characters: Vec<Character>,
+    pub connections_names: Vec<String>,
 }
 
 impl Location {
-    pub fn new(name: &str, look_around_message: Vec<String>, characters: Vec<Character>) -> Self {
+    pub fn new(
+        name: &str,
+        look_around_messages: Vec<String>,
+        characters: Vec<Character>,
+        connections_names: Vec<String>,
+    ) -> Self {
         Self {
             name: name.to_string(),
             characters,
-            look_around_message,
+            look_around_messages,
             actions: None,
+            connections_names,
         }
     }
 
@@ -71,5 +78,15 @@ impl Location {
             }
             None => {}
         }
+    }
+
+    pub fn look_around(&self) -> Vec<String> {
+        let mut look_around_messages = vec![];
+
+        for look_around_message in &self.look_around_messages {
+            look_around_messages.push(look_around_message.clone());
+        }
+
+        look_around_messages
     }
 }

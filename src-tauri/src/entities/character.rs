@@ -1,3 +1,4 @@
+// (DialogTrigger, Dialog)
 type DialogTrigger = (String, String);
 
 #[derive(Debug)]
