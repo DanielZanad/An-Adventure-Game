@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
@@ -16,6 +16,16 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     console.log(await invoke("read_input", { input }));
   }
+
+  useEffect(() => {
+    const readInput = async () => {
+      try {
+        console.log(await invoke("start_game"));
+      } catch (err) {
+        console.error("Error invoking read_input:", err);
+      }
+    };
+  }, []);
 
   return (
     <main className="text-gray-500 bg-black">

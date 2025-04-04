@@ -1,10 +1,12 @@
 use std::sync::{Arc, Mutex};
 
+use serde::Serialize;
+
 use crate::helpers::helper::ActionLink;
 
 use super::{action::Actions, character::Character};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Clone)]
 pub struct Location {
     pub name: String,
     actions: ActionLink,

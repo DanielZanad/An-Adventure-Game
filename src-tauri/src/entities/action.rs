@@ -1,7 +1,9 @@
 use std::sync::{Arc, Mutex};
 
+use serde::Serialize;
+
 use crate::helpers::helper::ActionLink;
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Actions {
     pub name: String,
     pub action_triggers: Vec<String>,

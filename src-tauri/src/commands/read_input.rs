@@ -5,14 +5,19 @@ use crate::AppData;
 
 #[tauri::command]
 pub fn read_input(input: &str, state: State<'_, Mutex<AppData>>) -> String {
-    let mut app_data = state.lock().unwrap();
+    let app_data = state.lock().unwrap();
 
-    format!(
-        "{}",
-        app_data
-            .game
-            .get_actual_location()
-            .unwrap()
-            .perform_action(input)
-    )
+    match &app_data.game {
+        Some(game) => {
+            format!(
+                "{}",
+                game.lock()
+                    .unwrap()
+                    .get_actual_location()
+                    .unwrap()
+                    .perform_action(input)
+            )
+        }
+        None => String::from(""),
+    }
 }

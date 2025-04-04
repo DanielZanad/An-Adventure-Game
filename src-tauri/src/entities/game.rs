@@ -17,12 +17,14 @@ impl Game {
 
         Game {
             player,
-            actual_location: actual_location,
+            actual_location,
             locations: location_map,
         }
     }
+}
 
-    pub fn get_actual_location(&mut self) -> Option<&mut Location> {
+impl GameTrait for Game {
+    fn get_actual_location(&mut self) -> Option<&mut Location> {
         if let Some(current_location) = self.locations.get_mut(&self.actual_location) {
             Some(current_location)
         } else {
@@ -30,7 +32,7 @@ impl Game {
         }
     }
 
-    pub fn move_to(&mut self, next_location: &str) -> Result<String, String> {
+    fn move_to(&mut self, next_location: &str) -> Result<String, String> {
         if let Some(current_location) = self.locations.get(&self.actual_location) {
             if current_location
                 .connections_names
@@ -52,11 +54,11 @@ impl Game {
         }
     }
 
-    pub fn add_player_previous_location(&mut self, location: &str) {
+    fn add_player_previous_location(&mut self, location: &str) {
         self.player.previous_locations.push(location.to_string());
     }
 
-    pub fn get_last_player_location(&mut self) -> Option<String> {
+    fn get_last_player_location(&mut self) -> Option<String> {
         if self.player.previous_locations.len() <= 1 {
             return None;
         }
@@ -69,4 +71,16 @@ impl Game {
         }
         None
     }
+
+    fn get_player_previous_locations(&self) -> Vec<String> {
+        self.player.previous_locations.clone()
+    }
+}
+
+pub trait GameTrait {
+    fn get_actual_location(&mut self) -> Option<&mut Location>;
+    fn move_to(&mut self, next_location: &str) -> Result<String, String>;
+    fn add_player_previous_location(&mut self, location: &str);
+    fn get_last_player_location(&mut self) -> Option<String>;
+    fn get_player_previous_locations(&self) -> Vec<String>;
 }

@@ -1,7 +1,9 @@
+use serde::Serialize;
+
 // (DialogTrigger, Dialog)
 type DialogTrigger = (String, String);
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Clone)]
 pub struct Character {
     name: String,
     dialogs: Vec<Dialog>,
@@ -32,7 +34,7 @@ impl Character {
     }
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Dialog {
     question: String,
     answer: String,

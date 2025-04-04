@@ -5,7 +5,15 @@ use crate::AppData;
 
 #[tauri::command]
 pub fn look_around(state: State<'_, Mutex<AppData>>) -> Vec<String> {
-    let mut app_data = state.lock().unwrap();
+    let app_data = state.lock().unwrap();
 
-    app_data.game.get_actual_location().unwrap().look_around()
+    match &app_data.game {
+        Some(game) => game
+            .lock()
+            .unwrap()
+            .get_actual_location()
+            .unwrap()
+            .look_around(),
+        None => vec![String::from("")],
+    }
 }

@@ -1,3 +1,6 @@
+use serde::Serialize;
+
+#[derive(Serialize, Clone)]
 pub struct Player {
     name: String,
     items: Vec<String>,
